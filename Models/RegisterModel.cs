@@ -10,6 +10,8 @@ public class RegisterModel
     public string Username { get; set; }
 
     [Required(ErrorMessage = "Пароль обязателен")]
-    [MinLength(6, ErrorMessage = "Пароль должен содержать минимум 6 символов")]
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен содержать минимум 6 символов")]
+    [RegularExpression(@"^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?]*$",
+        ErrorMessage = "Пароль может содержать только латинские буквы, цифры и специальные символы")]
     public string Password { get; set; }
 } 

@@ -33,35 +33,33 @@ namespace autoparts.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            try
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+
+            if (user == null || user.Password != model.Password)
             {
-                var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Username == model.Username);
-
-                if (user == null || user.Password != model.Password)
-                {
-                    return Unauthorized("Неверное имя пользователя или пароль");
-                }
-
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role)
-                };
-
-                var identity = new ClaimsIdentity(claims, "Cookies");
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync("Cookies", principal);
-
-                return Ok(new { success = true });
+                return BadRequest("Неверное имя пользователя или пароль");
             }
-            catch (Exception ex)
+
+            var claims = new List<Claim>
             {
-                _logger.LogError(ex, "Ошибка при входе пользователя");
-                return StatusCode(500, "Произошла ошибка при входе");
-            }
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme, 
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddDays(1)
+                });
+            
+            return Ok(new { token = GenerateJwtToken(user), username = user.Username });
         }
 
         [HttpPost("register")]
@@ -71,14 +69,13 @@ namespace autoparts.Controllers
 
             try 
             {
-                if (string.IsNullOrWhiteSpace(model.Password))
+                if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { message = "Пароль не может быть пустым" });
-                }
+                    var errors = ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage);
 
-                if (model.Password.Length < 6)
-                {
-                    return BadRequest(new { message = "Пароль должен содержать минимум 6 символов" });
+                    return BadRequest(errors.First());
                 }
 
                 var existingUser = await _context.Users
@@ -87,10 +84,7 @@ namespace autoparts.Controllers
                 if (existingUser != null)
                 {
                     _logger.LogWarning($"Пользователь уже существует: {model.Username}");
-                    return Conflict(new { 
-                        status = 409,
-                        message = "Пользователь с таким именем или email уже существует" 
-                    });
+                    return BadRequest("Пользователь с таким именем или email уже существует");
                 }
 
                 var user = new User
@@ -110,7 +104,7 @@ namespace autoparts.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Ошибка при регистрации пользователя");
-                return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
+                return StatusCode(500, "Внутренняя ошибка сервера");
             }
         }
 

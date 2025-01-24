@@ -101,3 +101,49 @@ function updateUserBalance() {
             toastr.error('Ошибка при обновлении баланса');
         });
 }
+
+async function addToCart(productId) {
+    try {
+        const response = await fetch('/Cart/AddToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        });
+
+        if (response.status === 401) {
+            // Если пользователь не авторизован, перенаправляем на страницу входа
+            window.location.href = '/Home/Login';
+            return;
+        }
+
+        // ... остальной код обработки ответа ...
+    } catch (error) {
+        console.error('Error:', error);
+        toastr.error('Произошла ошибка при добавлении товара в корзину');
+    }
+}
+
+async function addToWishlist(productId) {
+    try {
+        const response = await fetch('/Wishlist/AddToWishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productId)
+        });
+
+        if (response.status === 401) {
+            // Если пользователь не авторизован, перенаправляем на страницу входа
+            window.location.href = '/Home/Login';
+            return;
+        }
+
+        // ... остальной код обработки ответа ...
+    } catch (error) {
+        console.error('Error:', error);
+        toastr.error('Произошла ошибка при добавлении товара в список желаемого');
+    }
+}

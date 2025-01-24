@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using autoparts.Controllers;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace autoparts
 {
@@ -26,16 +27,14 @@ namespace autoparts
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddDataProtection()
+                .SetApplicationName("autoparts")
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Keys")));
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie = new CookieBuilder
-                {
-                    Name = ".autoparts.Session",
-                    HttpOnly = true,
-                    IsEssential = true,
-                    SameSite = SameSiteMode.Lax
-                };
+                options.IdleTimeout = TimeSpan.FromHours(2);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -68,6 +67,11 @@ namespace autoparts
                     options.LogoutPath = "/Home/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(1);
                 });
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                });
 
             var app = builder.Build();
 
@@ -82,7 +86,6 @@ namespace autoparts
             app.UseRouting();
 
             app.UseSession();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

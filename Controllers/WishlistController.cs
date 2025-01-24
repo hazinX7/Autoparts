@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace autoparts.Controllers
 {
-    [Authorize]
     public class WishlistController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,6 +16,7 @@ namespace autoparts.Controllers
             _context = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -31,6 +31,10 @@ namespace autoparts.Controllers
         public async Task<IActionResult> AddToWishlist([FromBody]int productId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { redirectUrl = "/Home/Login" });
+            }
             
             var existingItem = await _context.Wishlist
                 .FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);

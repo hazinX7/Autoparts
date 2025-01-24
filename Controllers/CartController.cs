@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace autoparts.Controllers
 {
-    [Authorize]
+    [ApiController]
     [Route("[controller]")]
     public class CartController : Controller
     {
@@ -30,7 +30,7 @@ namespace autoparts.Controllers
             _logger = logger;
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -50,22 +50,20 @@ namespace autoparts.Controllers
             return View(cartItems);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartModel model)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { redirectUrl = "/Home/Login" });
+            }
+
             try
             {
                 _logger.LogInformation($"Received request body: {JsonSerializer.Serialize(model)}");
                 _logger.LogInformation($"Adding product to cart. ProductId: {model.ProductId}");
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _logger.LogInformation($"UserId: {userId}");
-
-                if (userId == null)
-                {
-                    return Unauthorized(new { success = false, message = "Необходима авторизация" });
-                }
 
                 var product = await _context.Products.FindAsync(model.ProductId);
                 
