@@ -27,31 +27,48 @@
         }
         
         .btn-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
+            padding: 0;
             border-radius: 50%;
-            border: 1px solid #ddd;
-            background: white;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            border: none;
+            background-color: #f8f9fa;
             transition: all 0.2s;
+            position: relative;
         }
         
         .btn-icon:hover {
-            background: #f8f9fa;
-            border-color: #ccc;
+            background-color: #e9ecef;
+            transform: translateY(-2px);
         }
         
         .btn-icon i {
-            font-size: 1.2rem;
-            color: #666;
+            font-size: 1.1rem;
+            color: #6c757d;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+        
+        .btn-icon[data-wishlist-button] i {
+            color: #dc3545;
+            margin: 0;
         }
         
         .btn-icon[data-wishlist-button].in-wishlist i {
             color: #dc3545;
         }
-
+        
+        .btn-icon[onclick*="addToCart"] i {
+            color: #0d6efd;
+            margin: 0;
+        }
+        
         .product-card {
             height: 100%;
             display: flex;
@@ -98,12 +115,13 @@
         }
 
         .card {
-            transition: transform 0.2s;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
         }
 
         .btn-primary {
@@ -237,6 +255,15 @@
             height: 35px;
             border-radius: 0 17px 17px 0;
             padding: 0 15px;
+        }
+
+        .price-block {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .main-price {
+            font-size: 1.25rem;
         }
     </style>
 </head>

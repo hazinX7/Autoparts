@@ -22,17 +22,15 @@ namespace autoparts.Controllers
         {
             if (string.IsNullOrWhiteSpace(query))
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             var products = await _context.Products
-                .Where(p => p.Name.Contains(query) || 
-                           p.Description.Contains(query) ||
-                           p.Category.Contains(query))
+                .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
                 .ToListAsync();
 
-            ViewBag.SearchTerm = query;
-            return View("Index", products);
+            ViewBag.SearchQuery = query;
+            return View(products);
         }
 
         [AllowAnonymous]
