@@ -7,86 +7,117 @@
 }
 
 <div class="container mt-4">
-    <h2>Оформление заказа</h2>
+    <h2 class="mb-4">Оформление заказа</h2>
 
-    <div class="row mt-4">
+    <div class="row">
         <div class="col-md-8">
-            <div class="card mb-4">
+            <div class="card mb-4 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Товары в заказе</h5>
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-cart3"></i> Товары в заказе
+                    </h5>
                     <div class="table-responsive">
-                        <table class="table">
-                            <thead>
+                        <table class="table table-hover">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Товар</th>
-                                    <th>Цена</th>
-                                    <th>Количество</th>
-                                    <th>Сумма</th>
+                                    <th class="text-center">Цена</th>
+                                    <th class="text-center">Количество</th>
+                                    <th class="text-end">Сумма</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td>@item.Product.Name</td>
-                                        <td>@item.Product.Price.ToString("C")</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@((item.Product.Price * item.Quantity).ToString("C"))</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" 
+                                                     class="me-3" style="width: 50px; height: 50px; object-fit: contain;">
+                                                <span>@item.Product.Name</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">@item.Product.Price.ToString("C")</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end">@((item.Product.Price * item.Quantity).ToString("C"))</td>
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Итого:</strong></td>
+                                    <td class="text-end"><strong>@totalAmount.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Адрес доставки</h5>
-                    <div class="mb-3">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-geo-alt"></i> Адрес доставки
+                    </h5>
+                    <div class="mb-4">
+                        <label for="deliveryCity" class="form-label">Город доставки <span class="text-danger">*</span></label>
+                        <input type="text" id="deliveryCity" class="form-control" 
+                               placeholder="Например: Москва" required>
+                        <div class="invalid-feedback" id="deliveryCityError">
+                            Пожалуйста, укажите город доставки
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="deliveryAddress" class="form-label">Адрес доставки <span class="text-danger">*</span></label>
                         <textarea id="deliveryAddress" class="form-control" rows="3" 
-                                placeholder="Введите адрес доставки" required></textarea>
+                                placeholder="Например: ул. Ленина, д. 1, кв. 123" required></textarea>
                         <div class="invalid-feedback" id="deliveryAddressError">
                             Пожалуйста, укажите адрес доставки
                         </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" id="deliveryCity" class="form-control" 
-                               placeholder="Город доставки" required>
-                        <div class="invalid-feedback" id="deliveryCityError">
-                            Пожалуйста, укажите город доставки
-                        </div>
-                    </div>
-                    <div class="mb-3">
+                        <label for="comment" class="form-label">Комментарий к заказу</label>
                         <textarea id="comment" class="form-control" rows="3" 
-                                 placeholder="Комментарий"></textarea>
+                                 placeholder="Дополнительная информация для курьера"></textarea>
+                        <div class="form-text">Необязательное поле</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card">
+            <div class="card shadow-sm position-sticky" style="top: 1rem;">
                 <div class="card-body">
-                    <h5 class="card-title">Информация о заказе</h5>
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-info-circle"></i> Информация о заказе
+                    </h5>
                     <div class="mb-3">
-                        <label class="form-label">Сумма заказа</label>
-                        <p class="form-control-static">@totalAmount.ToString("C")</p>
+                        <div class="d-flex justify-content-between">
+                            <span>Сумма заказа:</span>
+                            <strong>@totalAmount.ToString("C")</strong>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ваш баланс</label>
-                        <p class="form-control-static">@userBalance.ToString("C")</p>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between">
+                            <span>Ваш баланс:</span>
+                            <strong class="@(userBalance < totalAmount ? "text-danger" : "text-success")">
+                                @userBalance.ToString("C")
+                            </strong>
+                        </div>
                     </div>
                     @if (userBalance < totalAmount)
                     {
-                        <div class="alert alert-warning">
-                            Недостаточно средств на балансе. 
-                            <a href="/Balance" class="alert-link">Пополнить баланс</a>
+                        <div class="alert alert-warning d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <div>
+                                Недостаточно средств на балансе. 
+                                <a href="/Balance" class="alert-link">Пополнить баланс</a>
+                            </div>
                         </div>
                     }
-                    <button class="btn btn-primary w-100" onclick="placeOrder()"
+                    <button class="btn btn-primary w-100 btn-lg" onclick="placeOrder()"
                             @(userBalance < totalAmount ? "disabled" : "")>
-                        Оформить заказ
+                        <i class="bi bi-check2-circle me-2"></i>Оформить заказ
                     </button>
                 </div>
             </div>
@@ -126,6 +157,10 @@
                 return;
             }
 
+            const submitButton = document.querySelector('button[onclick="placeOrder()"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Оформление заказа...';
+
             const data = {
                 deliveryAddress: document.getElementById('deliveryAddress').value.trim(),
                 deliveryCity: document.getElementById('deliveryCity').value.trim(),
@@ -148,11 +183,15 @@
                     }, 1500);
                 } else {
                     toastr.error(result.message);
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="bi bi-check2-circle me-2"></i>Оформить заказ';
                 }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
                 toastr.error('Произошла ошибка при оформлении заказа');
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="bi bi-check2-circle me-2"></i>Оформить заказ';
             });
         }
     </script>
