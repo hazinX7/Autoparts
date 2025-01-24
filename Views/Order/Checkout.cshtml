@@ -153,7 +153,12 @@
 
         function placeOrder() {
             if (!validateForm()) {
-                toastr.error('Пожалуйста, заполните все обязательные поля');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Пожалуйста, заполните все обязательные поля',
+                    confirmButtonColor: '#dc3545'
+                });
                 return;
             }
 
@@ -177,19 +182,44 @@
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    toastr.success(result.message);
-                    setTimeout(() => {
-                        window.location.href = '/Order/History';
-                    }, 1500);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Заказ оформлен!',
+                        html: `
+                            <div class="text-start">
+                                <p class="mb-2">Ваш заказ успешно оформлен.</p>
+                                <p class="mb-2"><strong>Адрес доставки:</strong><br>${data.deliveryCity}, ${data.deliveryAddress}</p>
+                                <p class="mb-0"><strong>Сумма заказа:</strong> ${result.orderDetails?.totalAmount.toLocaleString('ru-RU')} ₽</p>
+                            </div>
+                        `,
+                        confirmButtonText: 'Перейти к заказам',
+                        confirmButtonColor: '#0d6efd',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/Order/History';
+                        }
+                    });
                 } else {
-                    toastr.error(result.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ошибка',
+                        text: result.message,
+                        confirmButtonColor: '#dc3545'
+                    });
                     submitButton.disabled = false;
                     submitButton.innerHTML = '<i class="bi bi-check2-circle me-2"></i>Оформить заказ';
                 }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
-                toastr.error('Произошла ошибка при оформлении заказа');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при оформлении заказа',
+                    confirmButtonColor: '#dc3545'
+                });
                 submitButton.disabled = false;
                 submitButton.innerHTML = '<i class="bi bi-check2-circle me-2"></i>Оформить заказ';
             });
