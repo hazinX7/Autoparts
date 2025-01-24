@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication;
 
 namespace autoparts.Controllers
 {
@@ -96,6 +97,13 @@ namespace autoparts.Controllers
                 _logger.LogError(ex, "Ошибка при регистрации пользователя");
                 return StatusCode(500, new { message = "Ошибка при регистрации пользователя" });
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Json(new { success = true });
         }
     }
 } 
