@@ -5,40 +5,109 @@
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">Категории товаров</h2>
-    
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @foreach (var category in Model)
-        {
-            <div class="col">
-                <div class="card h-100 category-card">
-                    <div class="card-body">
-                        <h5 class="card-title">@category</h5>
-                        <a href="@Url.Action("Products", "Category", new { category = category })" 
-                           class="btn btn-outline-primary stretched-link">
-                            Перейти к товарам
-                        </a>
-                    </div>
+    <h2 class="text-center mb-4">Категории товаров</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Двигатель</h5>
+                    <a href="/Category/Products?category=Двигатель" class="btn btn-primary">Перейти к товарам</a>
                 </div>
             </div>
-        }
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-arrows-collapse text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Подвеска</h5>
+                    <a href="/Category/Products?category=Подвеска" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-lightning-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Система зажигания</h5>
+                    <a href="/Category/Products?category=Система зажигания" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-thermometer-half text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Система охлаждения</h5>
+                    <a href="/Category/Products?category=Система охлаждения" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-droplet-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Топливная система</h5>
+                    <a href="/Category/Products?category=Топливная система" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-disc-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Тормозная система</h5>
+                    <a href="/Category/Products?category=Тормозная система" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear-wide-connected text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Трансмиссия</h5>
+                    <a href="/Category/Products?category=Трансмиссия" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-funnel-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Фильтры</h5>
+                    <a href="/Category/Products?category=Фильтры" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-lightning-charge-fill text-primary display-4 mb-3"></i>
+                    <h5 class="card-title">Электрика</h5>
+                    <a href="/Category/Products?category=Электрика" class="btn btn-primary">Перейти к товарам</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-.category-card {
-    transition: transform 0.2s;
-    cursor: pointer;
+.card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
-.category-card:hover {
+.card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-.category-card .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.display-4 {
+    font-size: 2.5rem;
+}
+
+.card-body {
+    padding: 2rem;
 }
 </style> 
