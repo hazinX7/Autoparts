@@ -48,8 +48,26 @@ namespace autoparts.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Пожалуйста, заполните все обязательные поля" 
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(model.DeliveryAddress) || 
+                    string.IsNullOrWhiteSpace(model.DeliveryCity))
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Адрес и город доставки обязательны для заполнения" 
+                    });
+                }
+
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null) return Unauthorized(new { success = false, message = "Пользователь не авторизован" });
+                if (userId == null) 
+                    return Unauthorized(new { success = false, message = "Пользователь не авторизован" });
 
                 var user = await _context.Users.FindAsync(int.Parse(userId));
                 if (user == null) return NotFound(new { success = false, message = "Пользователь не найден" });
@@ -143,7 +161,10 @@ namespace autoparts.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Неожиданная ошибка при оформлении заказа");
-                return StatusCode(500, new { success = false, message = "Произошла ошибка при оформлении заказа" });
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Произошла ошибка при оформлении заказа" 
+                });
             }
         }
 

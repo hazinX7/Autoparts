@@ -45,13 +45,21 @@
                     <h5 class="card-title">Адрес доставки</h5>
                     <div class="mb-3">
                         <textarea id="deliveryAddress" class="form-control" rows="3" 
-                                placeholder="Введите адрес доставки"></textarea>
+                                placeholder="Введите адрес доставки" required></textarea>
+                        <div class="invalid-feedback" id="deliveryAddressError">
+                            Пожалуйста, укажите адрес доставки
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" id="deliveryCity" class="form-control" placeholder="Город доставки">
+                        <input type="text" id="deliveryCity" class="form-control" 
+                               placeholder="Город доставки" required>
+                        <div class="invalid-feedback" id="deliveryCityError">
+                            Пожалуйста, укажите город доставки
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <textarea id="comment" class="form-control" rows="3" placeholder="Комментарий"></textarea>
+                        <textarea id="comment" class="form-control" rows="3" 
+                                 placeholder="Комментарий"></textarea>
                     </div>
                 </div>
             </div>
@@ -88,11 +96,40 @@
 
 @section Scripts {
     <script>
+        function validateForm() {
+            let isValid = true;
+            const deliveryAddress = document.getElementById('deliveryAddress');
+            const deliveryCity = document.getElementById('deliveryCity');
+            
+            // Очищаем предыдущие ошибки
+            deliveryAddress.classList.remove('is-invalid');
+            deliveryCity.classList.remove('is-invalid');
+            
+            // Проверяем адрес доставки
+            if (!deliveryAddress.value.trim()) {
+                deliveryAddress.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Проверяем город доставки
+            if (!deliveryCity.value.trim()) {
+                deliveryCity.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
         function placeOrder() {
+            if (!validateForm()) {
+                toastr.error('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+
             const data = {
-                deliveryAddress: document.getElementById('deliveryAddress').value,
-                deliveryCity: document.getElementById('deliveryCity').value,
-                comment: document.getElementById('comment')?.value
+                deliveryAddress: document.getElementById('deliveryAddress').value.trim(),
+                deliveryCity: document.getElementById('deliveryCity').value.trim(),
+                comment: document.getElementById('comment')?.value?.trim()
             };
 
             fetch('/Order/PlaceOrder', {
@@ -106,10 +143,9 @@
             .then(result => {
                 if (result.success) {
                     toastr.success(result.message);
-                    // Очищаем форму
-                    document.getElementById('deliveryAddress').value = '';
-                    document.getElementById('deliveryCity').value = '';
-                    document.getElementById('comment').value = '';
+                    setTimeout(() => {
+                        window.location.href = '/Order/History';
+                    }, 1500);
                 } else {
                     toastr.error(result.message);
                 }
