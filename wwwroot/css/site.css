@@ -70,12 +70,32 @@ body {
 }
 
 .profile-card {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .profile-card:hover {
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}
+
+.profile-info .form-control-plaintext {
+    padding: 0.375rem 0;
+    font-weight: 500;
+}
+
+.profile-actions .btn {
+    transition: all 0.2s;
+}
+
+.profile-actions .btn:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 1em;
 }
 
 .nav-item .bi {
@@ -113,11 +133,6 @@ body {
 .order-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.badge {
-    padding: 0.5em 1em;
-    font-size: 0.875em;
 }
 
 .table-sm td {
