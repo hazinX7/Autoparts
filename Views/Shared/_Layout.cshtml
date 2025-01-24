@@ -38,11 +38,18 @@
             background-color: #f8f9fa;
             transition: all 0.2s;
             position: relative;
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         .btn-icon:hover {
             background-color: #e9ecef;
             transform: translateY(-2px);
+        }
+        
+        .btn-icon:focus {
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         .btn-icon i {
@@ -558,12 +565,15 @@
         function checkWishlistItems() {
             document.querySelectorAll('[data-wishlist-button]').forEach(button => {
                 const productId = button.getAttribute('data-product-id');
+                const icon = button.querySelector('i');  // Изменено: убран селектор data-wishlist-icon
+                
                 fetch(`/Wishlist/IsInWishlist?productId=${productId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.isInWishlist) {
                             button.classList.add('in-wishlist');
-                            button.querySelector('i').classList.add('text-danger');
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
                         }
                     });
             });
@@ -571,6 +581,8 @@
 
         function addToWishlist(productId) {
             const button = document.querySelector(`[data-product-id="${productId}"]`);
+            const icon = button.querySelector('i');  // Изменено: убран селектор data-wishlist-icon
+            
             // Если товар уже в списке желаемого, удаляем его
             if (button.classList.contains('in-wishlist')) {
                 fetch('/Wishlist/RemoveFromWishlist', {
@@ -593,7 +605,8 @@
                     if (!data) return;
                     if (data.success) {
                         button.classList.remove('in-wishlist');
-                        button.querySelector('i').classList.remove('text-danger');
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
                         toastr.success('Товар удален из списка желаемого');
                     }
                 })
@@ -603,6 +616,7 @@
                 });
                 return;
             }
+
             // Если товара нет в списке желаемого, добавляем его
             fetch('/Wishlist/AddToWishlist', {
                 method: 'POST',
@@ -624,7 +638,8 @@
                 if (!data) return;
                 if (data.success) {
                     button.classList.add('in-wishlist');
-                    button.querySelector('i').classList.add('text-danger');
+                    icon.classList.remove('bi-heart');
+                    icon.classList.add('bi-heart-fill');
                     toastr.success('Товар добавлен в список желаемого');
                 }
             })

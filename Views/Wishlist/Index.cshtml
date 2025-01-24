@@ -4,6 +4,75 @@
     ViewData["Title"] = "Список желаемого";
 }
 
+<style>
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: #f8f9fa;
+        transition: all 0.2s;
+        position: relative;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .btn-icon:hover {
+        background-color: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .btn-icon:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .btn-icon i {
+        font-size: 1.1rem;
+        color: #6c757d;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+    }
+
+    .btn-icon[data-wishlist-button] i {
+        color: #dc3545;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .product-card {
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+
+    .btn-icon[data-cart-button] i {
+        color: #0d6efd;
+        margin: 0;
+    }
+
+    .btn-icon[data-cart-button]:hover {
+        background-color: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .btn-icon[data-cart-button]:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
 <div class="container">
     <h2 class="mb-4">Список желаемого</h2>
 
@@ -32,10 +101,14 @@
                             <div class="mt-auto">
                                 <p class="product-price mb-3">@item.Product.Price.ToString("C")</p>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-primary flex-grow-1" onclick="addToCart(@item.ProductId)">
-                                        <i class="bi bi-cart-plus"></i> В корзину
+                                    <button class="btn btn-icon" onclick="addToCart(@item.ProductId)"
+                                            data-cart-button
+                                            data-product-id="@item.ProductId">
+                                        <i class="bi bi-cart"></i>
                                     </button>
-                                    <button class="btn btn-outline-danger" onclick="removeFromWishlist(@item.ProductId)">
+                                    <button class="btn btn-icon" onclick="removeFromWishlist(@item.ProductId)"
+                                            data-wishlist-button
+                                            data-product-id="@item.ProductId">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -62,6 +135,9 @@
                 cancelButtonColor: '#d33'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const button = document.querySelector(`[data-product-id="${productId}"]`);
+                    const icon = button.querySelector('i');
+
                     fetch('/Wishlist/RemoveFromWishlist', {
                         method: 'POST',
                         headers: {
@@ -73,7 +149,14 @@
                     .then(data => {
                         if (data.success) {
                             toastr.success('Товар успешно удален из списка желаемого');
-                            location.reload();
+                            // Находим родительский элемент карточки товара и удаляем его
+                            const productCard = button.closest('.col');
+                            productCard.remove();
+                            
+                            // Проверяем, остались ли товары в списке
+                            if (document.querySelectorAll('.col').length === 0) {
+                                location.reload(); // Перезагружаем страницу, если список пуст
+                            }
                         }
                     })
                     .catch(error => {
