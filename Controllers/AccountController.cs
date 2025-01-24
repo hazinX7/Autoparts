@@ -1,21 +1,25 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using hazinDNS_v2.Data;
-using hazinDNS_v2.Models;
+using autoparts.Data;
+using autoparts.Models;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, ILogger<AccountController> logger)
         {
             _context = context;
+            _logger = logger;
         }
+        
 
         [Authorize]
         public IActionResult ChangePassword()
@@ -54,6 +58,44 @@ namespace hazinDNS_v2.Controllers
 
             TempData["SuccessMessage"] = "Пароль успешно изменен";
             return RedirectToAction("Index", "Profile");
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Проверяем, существует ли пользователь с таким email
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (existingUser != null)
+            {
+                return BadRequest(new { message = "Пользователь с таким email уже существует" });
+            }
+
+            // Создаем нового пользователя
+            var user = new User
+            {
+                Username = model.Username,
+                Email = model.Email,
+                Password = model.Password // В реальном приложении пароль должен быть захэширован
+            };
+
+            try 
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation("Пользователь создан успешно.");
+                return StatusCode(201, new { success = true, message = "Регистрация успешна" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при регистрации пользователя");
+                return StatusCode(500, new { message = "Ошибка при регистрации пользователя" });
+            }
         }
     }
 } 

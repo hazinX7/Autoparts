@@ -1,4 +1,4 @@
-@model IEnumerable<hazinDNS_v2.Models.CartItem>
+@model IEnumerable<autoparts.Models.CartItem>
 
 @{
     ViewData["Title"] = "Оформление заказа";
@@ -47,6 +47,12 @@
                         <textarea id="deliveryAddress" class="form-control" rows="3" 
                                 placeholder="Введите адрес доставки"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <input type="text" id="deliveryCity" class="form-control" placeholder="Город доставки">
+                    </div>
+                    <div class="mb-3">
+                        <textarea id="comment" class="form-control" rows="3" placeholder="Комментарий"></textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,63 +89,34 @@
 @section Scripts {
     <script>
         function placeOrder() {
-            const deliveryAddress = document.getElementById('deliveryAddress').value;
-            
-            if (!deliveryAddress) {
-                Swal.fire({
-                    title: 'Ошибка',
-                    text: 'Пожалуйста, укажите адрес доставки',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#dc3545'
-                });
-                return;
-            }
+            const data = {
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                deliveryCity: document.getElementById('deliveryCity').value,
+                comment: document.getElementById('comment')?.value
+            };
 
             fetch('/Order/PlaceOrder', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ deliveryAddress: deliveryAddress })
+                body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Заказ оформлен!',
-                        text: 'Ваш заказ успешно оформлен и принят в обработку',
-                        icon: 'success',
-                        confirmButtonText: 'Перейти к заказам',
-                        confirmButtonColor: '#28a745',
-                        showConfirmButton: true,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'animated fadeInDown'
-                        }
-                    }).then((result) => {
-                        window.location.href = '/Order/History';
-                    });
+            .then(result => {
+                if (result.success) {
+                    toastr.success(result.message);
+                    // Очищаем форму
+                    document.getElementById('deliveryAddress').value = '';
+                    document.getElementById('deliveryCity').value = '';
+                    document.getElementById('comment').value = '';
                 } else {
-                    Swal.fire({
-                        title: 'Ошибка',
-                        text: data.message || 'Произошла ошибка при оформлении заказа',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#dc3545'
-                    });
+                    toastr.error(result.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    title: 'Ошибка',
-                    text: 'Произошла ошибка при оформлении заказа',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#dc3545'
-                });
+                console.error('Ошибка:', error);
+                toastr.error('Произошла ошибка при оформлении заказа');
             });
         }
     </script>

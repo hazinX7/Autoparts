@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using hazinDNS_v2.Data;
-using hazinDNS_v2.Models;
+using autoparts.Data;
+using autoparts.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     [Authorize]
     public class WishlistController : Controller

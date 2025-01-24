@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using hazinDNS_v2.Models;
-using hazinDNS_v2.Data;
+using autoparts.Models;
+using autoparts.Data;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     [Authorize]
     [Route("[controller]")]
@@ -98,7 +98,7 @@ namespace hazinDNS_v2.Controllers
                 }
                 await _context.SaveChangesAsync();
 
-                return Json(new { success = true });
+                return StatusCode(StatusCodes.Status201Created, new { success = true });
             }
             catch (Exception ex)
             {

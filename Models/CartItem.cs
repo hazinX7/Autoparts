@@ -1,4 +1,4 @@
-namespace hazinDNS_v2.Models
+namespace autoparts.Models
 {
     public class CartItem
     {

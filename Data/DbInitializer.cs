@@ -1,6 +1,6 @@
-using hazinDNS_v2.Models;
+using autoparts.Models;
 
-namespace hazinDNS_v2.Data
+namespace autoparts.Data
 {
     public static class DbInitializer
     {
@@ -25,15 +25,15 @@ namespace hazinDNS_v2.Data
                     new User
                     {
                         Username = "admin",
-                        Password = "python",
-                        Email = "admin@hazindns.com",
+                        Password = "admin",
+                        Email = "admin@autoparts.com",
                         Role = "Admin"
                     },
                     new User
                     {
                         Username = "user",
                         Password = "password",
-                        Email = "user@hazindns.com",
+                        Email = "user@autoparts.com",
                         Role = "User"
                     }
                 };
@@ -47,200 +47,110 @@ namespace hazinDNS_v2.Data
                 {
                     new Product 
                     { 
-                        Name = "Холодильник Samsung RF50",
-                        Price = 49999.99M,
-                        Description = "Двухкамерный холодильник с системой NoFrost, объем 500л",
-                        ImageUrl = "/images/samsung-fridge.jpg",
-                        Category = "Холодильники",
+                        Name = "Масляный фильтр MANN W 914/2",
+                        Price = 499.99M,
+                        Description = "Высококачественный масляный фильтр для легковых автомобилей",
+                        ImageUrl = "/images/oil-filter.jpg",
+                        Category = "Фильтры",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Стиральная машина LG F2J3NS0W",
-                        Price = 35999.99M,
-                        Description = "Стиральная машина с функцией пара, загрузка 6.5 кг",
-                        ImageUrl = "/images/lg-washer.jpg",
-                        Category = "Стиральные машины",
+                        Name = "Тормозные колодки Brembo P 85 020",
+                        Price = 2999.99M,
+                        Description = "Передние тормозные колодки для спортивного вождения",
+                        ImageUrl = "/images/brake-pads.jpg",
+                        Category = "Тормозная система",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Телевизор Sony XR-65A80L",
-                        Price = 199999.99M,
-                        Description = "OLED телевизор 65 дюймов, 4K, Smart TV",
-                        ImageUrl = "/images/sony-tv.jpg",
-                        Category = "Телевизоры",
+                        Name = "Аккумулятор BOSCH S4 60Ah",
+                        Price = 7499.99M,
+                        Description = "Надежный аккумулятор с увеличенным сроком службы",
+                        ImageUrl = "/images/battery.jpg",
+                        Category = "Электрика",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Микроволновая печь Panasonic NN-GT261W",
+                        Name = "Свечи зажигания NGK Laser Platinum",
+                        Price = 799.99M,
+                        Description = "Платиновые свечи зажигания с увеличенным ресурсом",
+                        ImageUrl = "/images/spark-plugs.jpg",
+                        Category = "Система зажигания",
+                        InStock = true
+                    },
+                    new Product 
+                    { 
+                        Name = "Амортизаторы KYB Excel-G",
+                        Price = 3499.99M,
+                        Description = "Газовые амортизаторы для комфортной езды",
+                        ImageUrl = "/images/shock-absorbers.jpg",
+                        Category = "Подвеска",
+                        InStock = true
+                    },
+                    new Product 
+                    { 
+                        Name = "Ремень ГРМ Gates PowerGrip",
+                        Price = 1299.99M,
+                        Description = "Усиленный ремень ГРМ с увеличенным ресурсом",
+                        ImageUrl = "/images/timing-belt.jpg",
+                        Category = "Двигатель",
+                        InStock = true
+                    },
+                    new Product 
+                    { 
+                        Name = "Воздушный фильтр K&N 33-2865",
+                        Price = 1899.99M,
+                        Description = "Спортивный воздушный фильтр нулевого сопротивления",
+                        ImageUrl = "/images/air-filter.jpg",
+                        Category = "Фильтры",
+                        InStock = true
+                    },
+                    new Product 
+                    { 
+                        Name = "Радиатор охлаждения Nissens",
                         Price = 8999.99M,
-                        Description = "Микроволновая печь с грилем, 20л",
-                        ImageUrl = "/images/panasonic-microwave.jpg",
-                        Category = "Микроволновые печи",
+                        Description = "Алюминиевый радиатор с повышенной теплоотдачей",
+                        ImageUrl = "/images/radiator.jpg",
+                        Category = "Система охлаждения",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Пылесос Dyson V15",
-                        Price = 49999.99M,
-                        Description = "Беспроводной пылесос с лазером для обнаружения пыли",
-                        ImageUrl = "/images/dyson-vacuum.jpg",
-                        Category = "Пылесосы",
+                        Name = "Комплект сцепления LUK RepSet",
+                        Price = 12999.99M,
+                        Description = "Полный комплект сцепления с выжимным подшипником",
+                        ImageUrl = "/images/clutch-kit.jpg",
+                        Category = "Трансмиссия",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Кофемашина DeLonghi ECAM 370.95.T",
-                        Price = 89999.99M,
-                        Description = "Автоматическая кофемашина с капучинатором",
-                        ImageUrl = "/images/delonghi-coffee.jpg",
-                        Category = "Кофемашины",
+                        Name = "Стойки стабилизатора Lemforder",
+                        Price = 899.99M,
+                        Description = "Усиленные стойки стабилизатора для лучшей управляемости",
+                        ImageUrl = "/images/stabilizer-links.jpg",
+                        Category = "Подвеска",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Посудомоечная машина Bosch SMS44DI01T",
-                        Price = 42999.99M,
-                        Description = "Отдельностоящая посудомоечная машина, 12 комплектов",
-                        ImageUrl = "/images/bosch-dishwasher.jpg",
-                        Category = "Посудомоечные машины",
+                        Name = "Топливный насос Bosch",
+                        Price = 4999.99M,
+                        Description = "Электрический топливный насос высокой производительности",
+                        ImageUrl = "/images/fuel-pump.jpg",
+                        Category = "Топливная система",
                         InStock = true
                     },
                     new Product 
                     { 
-                        Name = "Духовой шкаф Electrolux EOE7P31X",
-                        Price = 39999.99M,
-                        Description = "Электрический духовой шкаф с паром",
-                        ImageUrl = "/images/electrolux-oven.jpg",
-                        Category = "Духовые шкафы",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "MSI Raider GE78 HX",
-                        Description = "Игровой ноутбук с RTX 4090, Intel Core i9-13980HX",
-                        Price = 399999M,
-                        ImageUrl = "/images/msi-raider-ge78.png",
-                        Category = "Ноутбуки",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "ASUS ROG Strix G16",
-                        Description = "Игровой ноутбук с RTX 4080, Intel Core i9-13980H",
-                        Price = 289999M,
-                        ImageUrl = "/images/asus-rog-strix-g16.png",
-                        Category = "Ноутбуки",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Alienware Aurora R15",
-                        Description = "Игровой компьютер с RTX 4090, Intel Core i9-13900K",
-                        Price = 459999M,
-                        ImageUrl = "/images/alienware-aurora-r15.png",
-                        Category = "Компьютеры",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Bosch MFW3X10B",
-                        Description = "Мясорубка с производительностью 2 кг/мин",
-                        Price = 7999M,
-                        ImageUrl = "/images/bosch-grinder.png",
-                        Category = "Бытовая техника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "MSI MEG Aegis Ti5",
-                        Description = "Игровой компьютер с RTX 4080, Intel Core i7-13700K",
-                        Price = 349999M,
-                        ImageUrl = "/images/msi-meg-aegis-ti5.png",
-                        Category = "Компьютеры",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "ASUS ROG Swift PG32UQX",
-                        Description = "4K Gaming Monitor, 32 дюйма, 144Hz, Mini LED",
-                        Price = 199999M,
-                        ImageUrl = "/images/asus-rog-swift-pg32uqx.png",
-                        Category = "Мониторы",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Samsung Odyssey Neo G9",
-                        Description = "49 дюймов, 5120x1440, 240Hz, Mini LED",
-                        Price = 249999M,
-                        ImageUrl = "/images/samsung-odyssey-neo-g9.png",
-                        Category = "Мониторы",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "JBL PartyBox 710",
-                        Description = "Мощная портативная колонка с световыми эффектами",
-                        Price = 69999M,
-                        ImageUrl = "/images/jbl-partybox-710.png",
-                        Category = "Аудиотехника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "JBL Charge 5",
-                        Description = "Портативная водонепроницаемая колонка",
-                        Price = 12999M,
-                        ImageUrl = "/images/jbl-charge-5.png",
-                        Category = "Аудиотехника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Samsung Galaxy Z Flip 5",
-                        Description = "Складной смартфон с 6.7\" Dynamic AMOLED 2X дисплеем, 8GB RAM, 256GB",
-                        Price = 89999M,
-                        ImageUrl = "/images/samsung-zflip5.png",
-                        Category = "Смартфоны",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Polaris PWK 1725CGLD",
-                        Description = "Электрический чайник с LED подсветкой, 1.7л",
-                        Price = 2999M,
-                        ImageUrl = "/images/polaris-kettle.png",
-                        Category = "Бытовая техника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Tefal OptiGrill+ GC712",
-                        Description = "Умный гриль с автоматическими программами",
-                        Price = 12999M,
-                        ImageUrl = "/images/tefal-optigrill.png",
-                        Category = "Бытовая техника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Redmond RMC-M92",
-                        Description = "Мультиварка с 45 программами приготовления",
-                        Price = 5999M,
-                        ImageUrl = "/images/redmond-multicooker.png",
-                        Category = "Бытовая техника",
-                        InStock = true
-                    },
-                    new Product 
-                    { 
-                        Name = "Philips EP2231/40",
-                        Description = "Автоматическая кофемашина с капучинатором",
-                        Price = 39999M,
-                        ImageUrl = "/images/philips-coffee.png",
-                        Category = "Бытовая техника",
+                        Name = "Катушка зажигания Denso",
+                        Price = 2499.99M,
+                        Description = "Высоковольтная катушка зажигания с улучшенными характеристиками",
+                        ImageUrl = "/images/ignition-coil.jpg",
+                        Category = "Система зажигания",
                         InStock = true
                     }
                 };

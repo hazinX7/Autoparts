@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using hazinDNS_v2.Models;
+using autoparts.Models;
 
-namespace hazinDNS_v2.Data
+namespace autoparts.Data
 {
     public class ApplicationDbContext : DbContext
     {

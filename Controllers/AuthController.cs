@@ -3,14 +3,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using hazinDNS_v2.Models;
-using hazinDNS_v2.Data;
+using autoparts.Models;
+using autoparts.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -68,28 +69,49 @@ namespace hazinDNS_v2.Controllers
         {
             _logger.LogInformation($"Попытка регистрации пользователя: {model.Username}");
 
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == model.Username || u.Email == model.Email);
-
-            if (existingUser != null)
+            try 
             {
-                _logger.LogWarning($"Пользователь уже существует: {model.Username}");
-                return BadRequest("Пользователь с таким именем или email уже существует");
+                if (string.IsNullOrWhiteSpace(model.Password))
+                {
+                    return BadRequest(new { message = "Пароль не может быть пустым" });
+                }
+
+                if (model.Password.Length < 6)
+                {
+                    return BadRequest(new { message = "Пароль должен содержать минимум 6 символов" });
+                }
+
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Username == model.Username || u.Email == model.Email);
+
+                if (existingUser != null)
+                {
+                    _logger.LogWarning($"Пользователь уже существует: {model.Username}");
+                    return Conflict(new { 
+                        status = 409,
+                        message = "Пользователь с таким именем или email уже существует" 
+                    });
+                }
+
+                var user = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    Password = model.Password,
+                    Role = "User"
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Пользователь успешно зарегистрирован: {model.Username}");
+                return StatusCode(StatusCodes.Status201Created, new { message = "Регистрация успешна" });
             }
-
-            var user = new User
+            catch (Exception ex)
             {
-                Username = model.Username,
-                Email = model.Email,
-                Password = model.Password,
-                Role = "User"
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation($"Пользователь успешно зарегистрирован: {model.Username}");
-            return Ok(new { message = "Регистрация успешна" });
+                _logger.LogError(ex, "Ошибка при регистрации пользователя");
+                return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
+            }
         }
 
         [HttpPost("logout")]
@@ -150,8 +172,15 @@ namespace hazinDNS_v2.Controllers
 
     public class RegisterModel
     {
+        [Required(ErrorMessage = "Имя пользователя обязательно")]
         public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email обязателен")]
+        [EmailAddress(ErrorMessage = "Некорректный формат email")]
         public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Пароль обязателен")]
+        [MinLength(6, ErrorMessage = "Пароль должен содержать минимум 6 символов")]
         public string Password { get; set; } = string.Empty;
     }
 } 

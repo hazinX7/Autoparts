@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace hazinDNS_v2.Migrations
+namespace autoparts.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -68,6 +68,27 @@ namespace hazinDNS_v2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Wishlist",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DateAdded = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlist", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wishlist_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -77,7 +98,9 @@ namespace hazinDNS_v2.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    DeliveryAddress = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false)
+                    DeliveryAddress = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    DeliveryCity = table.Column<string>(type: "TEXT", nullable: false),
+                    Comment = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -137,6 +160,11 @@ namespace hazinDNS_v2.Migrations
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlist_ProductId",
+                table: "Wishlist",
+                column: "ProductId");
         }
 
         /// <inheritdoc />
@@ -147,6 +175,9 @@ namespace hazinDNS_v2.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
+
+            migrationBuilder.DropTable(
+                name: "Wishlist");
 
             migrationBuilder.DropTable(
                 name: "Orders");

@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using hazinDNS_v2.Data;
+using autoparts.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
-using hazinDNS_v2.Controllers;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,8 +14,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Localization;
+using autoparts.Controllers;
 
-namespace hazinDNS_v2
+namespace autoparts
 {
     public class Program
     {
@@ -30,7 +30,7 @@ namespace hazinDNS_v2
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie = new CookieBuilder
                 {
-                    Name = ".hazinDNS.Session",
+                    Name = ".autoparts.Session",
                     HttpOnly = true,
                     IsEssential = true,
                     SameSite = SameSiteMode.Lax
@@ -62,7 +62,7 @@ namespace hazinDNS_v2
             builder.Services.AddAuthentication("Cookies")
                 .AddCookie("Cookies", options =>
                 {
-                    options.Cookie.Name = ".hazinDNS.Auth";
+                    options.Cookie.Name = ".autoparts.Auth";
                     options.LoginPath = "/Home/Login";
                     options.LogoutPath = "/Home/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(1);

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using hazinDNS_v2.Data;
+using autoparts.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     public class CategoryController : Controller
     {

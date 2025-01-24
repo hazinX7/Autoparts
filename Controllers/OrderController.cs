@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using hazinDNS_v2.Models;
-using hazinDNS_v2.Data;
+using autoparts.Models;
+using autoparts.Data;
 using System.Security.Claims;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     [Authorize]
     public class OrderController : Controller
@@ -48,19 +48,13 @@ namespace hazinDNS_v2.Controllers
         {
             try
             {
-                if (model == null || string.IsNullOrWhiteSpace(model.DeliveryAddress))
-                {
-                    return BadRequest(new { message = "Адрес доставки обязателен" });
-                }
-
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null) return Unauthorized();
-
-                _logger.LogInformation($"Creating order for user {userId}");
+                if (userId == null) return Unauthorized(new { success = false, message = "Пользователь не авторизован" });
 
                 var user = await _context.Users.FindAsync(int.Parse(userId));
-                if (user == null) return NotFound(new { message = "Пользователь не найден" });
+                if (user == null) return NotFound(new { success = false, message = "Пользователь не найден" });
 
+                // Получаем товары из корзины
                 var cartItems = await _context.CartItems
                     .Include(ci => ci.Product)
                     .Where(ci => ci.CartId == $"user_{userId}")
@@ -68,75 +62,88 @@ namespace hazinDNS_v2.Controllers
 
                 if (!cartItems.Any())
                 {
-                    return BadRequest(new { message = "Корзина пуста" });
+                    return BadRequest(new { success = false, message = "Корзина пуста" });
                 }
 
-                foreach (var item in cartItems)
-                {
-                    if (item.Product == null)
-                    {
-                        return BadRequest(new { message = $"Товар с ID {item.ProductId} не найден" });
-                    }
-                }
+                decimal totalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity);
 
-                var totalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity);
-
+                // Проверяем баланс пользователя
                 if (user.Balance < totalAmount)
                 {
-                    return BadRequest(new { message = "Недостаточно средств на балансе" });
+                    return BadRequest(new { 
+                        success = false, 
+                        message = $"Недостаточно средств. Необходимо: {totalAmount:N0} ₽, на балансе: {user.Balance:N0} ₽" 
+                    });
                 }
 
                 using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
+                    // Создаем заказ
                     var order = new Order
                     {
-                        UserId = user.Id,
-                        OrderDate = DateTime.Now,
+                        UserId = int.Parse(userId),
+                        OrderDate = DateTime.UtcNow,
+                        Status = "Создан",
                         TotalAmount = totalAmount,
                         DeliveryAddress = model.DeliveryAddress,
-                        Status = "Новый"
+                        DeliveryCity = model.DeliveryCity,
+                        Comment = model.Comment
                     };
 
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
 
-                    var orderItems = cartItems.Select(item => new OrderItem
+                    // Создаем элементы заказа
+                    foreach (var cartItem in cartItems)
                     {
-                        OrderId = order.Id,
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        Price = item.Product.Price
-                    }).ToList();
+                        var orderItem = new OrderItem
+                        {
+                            OrderId = order.Id,
+                            ProductId = cartItem.ProductId,
+                            Quantity = cartItem.Quantity,
+                            Price = cartItem.Product.Price
+                        };
+                        _context.OrderItems.Add(orderItem);
+                    }
 
-                    _context.OrderItems.AddRange(orderItems);
-
+                    // Списываем средства с баланса
                     user.Balance -= totalAmount;
+
+                    // Очищаем корзину
                     _context.CartItems.RemoveRange(cartItems);
-                    
+
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation($"Order {order.Id} created successfully");
-                    return Json(new { 
+                    return StatusCode(StatusCodes.Status201Created, new { 
                         success = true, 
-                        message = "Заказ успешно оформлен!",
-                        orderId = order.Id
+                        message = "Заказ успешно оформлен",
+                        orderId = order.Id,
+                        orderDetails = new {
+                            deliveryAddress = order.DeliveryAddress,
+                            deliveryCity = order.DeliveryCity,
+                            totalAmount = order.TotalAmount,
+                            items = cartItems.Select(ci => new {
+                                productName = ci.Product.Name,
+                                quantity = ci.Quantity,
+                                price = ci.Product.Price,
+                                total = ci.Quantity * ci.Product.Price
+                            })
+                        }
                     });
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error creating order: {Message}", ex.Message);
-                    _logger.LogError(ex.StackTrace);
-                    return StatusCode(500, new { message = $"Ошибка при создании заказа: {ex.Message}" });
+                    _logger.LogError(ex, "Ошибка при создании заказа");
+                    return StatusCode(500, new { success = false, message = "Ошибка при создании заказа" });
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error in PlaceOrder: {Message}", ex.Message);
-                _logger.LogError(ex.StackTrace);
-                return StatusCode(500, new { message = $"Неожиданная ошибка при создании заказа: {ex.Message}" });
+                _logger.LogError(ex, "Неожиданная ошибка при оформлении заказа");
+                return StatusCode(500, new { success = false, message = "Произошла ошибка при оформлении заказа" });
             }
         }
 
@@ -160,5 +167,7 @@ namespace hazinDNS_v2.Controllers
     public class PlaceOrderModel
     {
         public string DeliveryAddress { get; set; }
+        public string DeliveryCity { get; set; }
+        public string? Comment { get; set; }
     }
 } 

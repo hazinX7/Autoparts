@@ -139,15 +139,16 @@
                 });
         }
 
-        // Обработка формы
+        // Обработка формы оплаты картой
         document.getElementById('balanceForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const data = {
-                cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''), // Удаляем пробелы
+                cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
                 expiryDate: document.getElementById('expiryDate').value,
                 cvv: document.getElementById('cvv').value,
-                amount: parseFloat(document.getElementById('amount').value)
+                amount: parseFloat(document.getElementById('amount').value),
+                paymentType: 'CARD'  // Добавляем тип платежа
             };
 
             fetch('/Balance/UpdateBalance', {
@@ -162,7 +163,7 @@
                 if (result.success) {
                     toastr.success('Баланс успешно пополнен');
                     loadCurrentBalance();
-                    this.reset(); // Очищаем форму после успешного пополнения
+                    this.reset();
                     if (window.updateUserBalance) {
                         window.updateUserBalance();
                     }
@@ -199,17 +200,27 @@
         document.getElementById('sbpForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const data = {
-                cardNumber: "0000000000000000", // Фиктивный номер карты для СБП
-                expiryDate: "01/99", // Фиктивная дата
-                cvv: "000", // Фиктивный CVV
-                amount: parseFloat(document.getElementById('sbpAmount').value)
-            };
-
-            if (data.amount > 750000) {
-                toastr.warning('Пожалуйста, выберите значение не более 750000.');
+            const amount = parseFloat(document.getElementById('sbpAmount').value);
+            const phoneNumber = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+            
+            // Проверяем данные перед отправкой
+            if (isNaN(amount) || amount <= 0) {
+                toastr.error('Введите корректную сумму');
                 return;
             }
+            
+            if (!phoneNumber.match(/^7\d{10}$/)) {
+                toastr.error('Введите корректный номер телефона');
+                return;
+            }
+
+            const data = {
+                amount: amount,
+                phoneNumber: phoneNumber,
+                paymentType: 'SBP'
+            };
+
+            console.log('Отправляемые данные:', data); // Для отладки
 
             fetch('/Balance/UpdateBalance', {
                 method: 'POST',
@@ -221,9 +232,9 @@
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    toastr.success('Баланс успешно пополнен');
+                    toastr.success(result.message);
                     loadCurrentBalance();
-                    this.reset(); // Очищаем форму после успешного пополнения
+                    this.reset();
                     if (window.updateUserBalance) {
                         window.updateUserBalance();
                     }
@@ -232,6 +243,7 @@
                 }
             })
             .catch(error => {
+                console.error('Ошибка:', error);
                 toastr.error('Произошла ошибка при пополнении баланса');
             });
         });

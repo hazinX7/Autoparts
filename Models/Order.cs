@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace hazinDNS_v2.Models
+namespace autoparts.Models
 {
     public class Order
     {
@@ -15,6 +15,8 @@ namespace hazinDNS_v2.Models
         [Required]
         [StringLength(500)]
         public string DeliveryAddress { get; set; } = string.Empty;
+        public string DeliveryCity { get; set; } = string.Empty;
+        public string? Comment { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 

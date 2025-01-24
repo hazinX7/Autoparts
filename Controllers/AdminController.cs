@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using hazinDNS_v2.Data;
+using autoparts.Data;
 using Microsoft.EntityFrameworkCore;
-using hazinDNS_v2.Models;
+using autoparts.Models;
 using Microsoft.Extensions.Logging;
 
-namespace hazinDNS_v2.Controllers
+namespace autoparts.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

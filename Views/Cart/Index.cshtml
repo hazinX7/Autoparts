@@ -1,8 +1,16 @@
-@model IEnumerable<hazinDNS_v2.Models.CartItem>
+@model IEnumerable<autoparts.Models.CartItem>
 
 @{
     ViewData["Title"] = "Корзина";
     var totalItems = Model?.Sum(item => item.Quantity) ?? 0;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
 
 <div class="container mt-4">

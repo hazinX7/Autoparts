@@ -4,23 +4,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using hazinDNS_v2.Data;
+using autoparts.Data;
 
 #nullable disable
 
-namespace hazinDNS_v2.Migrations
+namespace autoparts.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250117000637_InitialCreate")]
+    [Migration("20250124120439_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-            modelBuilder.Entity("hazinDNS_v2.Models.CartItem", b =>
+            modelBuilder.Entity("autoparts.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,15 +43,22 @@ namespace hazinDNS_v2.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.Order", b =>
+            modelBuilder.Entity("autoparts.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DeliveryAddress")
                         .IsRequired()
                         .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeliveryCity")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OrderDate")
@@ -75,7 +82,7 @@ namespace hazinDNS_v2.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.OrderItem", b =>
+            modelBuilder.Entity("autoparts.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,7 +109,7 @@ namespace hazinDNS_v2.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.Product", b =>
+            modelBuilder.Entity("autoparts.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +144,7 @@ namespace hazinDNS_v2.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.User", b =>
+            modelBuilder.Entity("autoparts.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,9 +177,32 @@ namespace hazinDNS_v2.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.CartItem", b =>
+            modelBuilder.Entity("autoparts.Models.Wishlist", b =>
                 {
-                    b.HasOne("hazinDNS_v2.Models.Product", "Product")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Wishlist");
+                });
+
+            modelBuilder.Entity("autoparts.Models.CartItem", b =>
+                {
+                    b.HasOne("autoparts.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -181,9 +211,9 @@ namespace hazinDNS_v2.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.Order", b =>
+            modelBuilder.Entity("autoparts.Models.Order", b =>
                 {
-                    b.HasOne("hazinDNS_v2.Models.User", "User")
+                    b.HasOne("autoparts.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -192,15 +222,15 @@ namespace hazinDNS_v2.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.OrderItem", b =>
+            modelBuilder.Entity("autoparts.Models.OrderItem", b =>
                 {
-                    b.HasOne("hazinDNS_v2.Models.Order", "Order")
+                    b.HasOne("autoparts.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("hazinDNS_v2.Models.Product", "Product")
+                    b.HasOne("autoparts.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -211,7 +241,18 @@ namespace hazinDNS_v2.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("hazinDNS_v2.Models.Order", b =>
+            modelBuilder.Entity("autoparts.Models.Wishlist", b =>
+                {
+                    b.HasOne("autoparts.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("autoparts.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });
