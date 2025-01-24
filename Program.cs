@@ -147,8 +147,11 @@ namespace autoparts
                     // Убедимся, что база данных создана и применены все миграции
                     context.Database.EnsureCreated();
                     
-                    // Теперь можно обновлять продукты
-                    DbInitializer.UpdateProducts(context);
+                    // Инициализируем базу данных только если в ней нет продуктов
+                    if (!context.Products.Any())
+                    {
+                        DbInitializer.Initialize(context);
+                    }
                 }
                 catch (Exception ex)
                 {

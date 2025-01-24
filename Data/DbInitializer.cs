@@ -159,15 +159,5 @@ namespace autoparts.Data
                 context.SaveChanges();
             }
         }
-
-        public static void UpdateProducts(ApplicationDbContext context)
-        {
-            // Очищаем существующие продукты
-            context.Products.RemoveRange(context.Products);
-            context.SaveChanges();
-            
-            // Вызываем Initialize для добавления всех продуктов заново
-            Initialize(context);
-        }
     }
 } 
