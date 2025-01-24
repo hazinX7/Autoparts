@@ -15,6 +15,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using autoparts.Controllers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace autoparts
 {
@@ -86,6 +87,37 @@ namespace autoparts
             app.UseAuthorization();
 
             app.UseRequestLocalization();
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    await next();
+                    return;
+                }
+
+                var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId != null)
+                {
+                    using var scope = app.Services.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    
+                    var cartId = $"user_{userId}";
+                    var cartItemsCount = await dbContext.CartItems
+                        .Where(ci => ci.CartId == cartId)
+                        .SumAsync(ci => ci.Quantity);
+                    
+                    var user = await dbContext.Users.FindAsync(int.Parse(userId));
+                    
+                    if (context.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>() != null)
+                    {
+                        context.Items["CartItemsCount"] = cartItemsCount;
+                        context.Items["UserBalance"] = user?.Balance ?? 0;
+                    }
+                }
+
+                await next();
+            });
 
             app.MapControllerRoute(
                 name: "profile",

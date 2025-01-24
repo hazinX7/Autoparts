@@ -284,17 +284,17 @@
 
                         <a href="/Profile" class="nav-link d-flex align-items-center me-4">
                             <i class="bi bi-cash-coin"></i>
-                            <span class="ms-1">Баланс: @ViewBag.UserBalance ₽</span>
+                            <span class="ms-1">Баланс: <span id="userBalance">@ViewBag.UserBalance</span> ₽</span>
                         </a>
 
                         <a href="/Cart" class="nav-link d-flex align-items-center me-4">
                             <i class="bi bi-cart4"></i>
-                            <span class="ms-1">Корзина (@ViewBag.CartItemsCount)</span>
+                            <span class="ms-1">Корзина (<span id="cartCount">@ViewBag.CartItemsCount</span>)</span>
                         </a>
 
                         <div class="vr mx-3"></div>
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
                             <a href="/Profile" class="nav-link d-flex align-items-center me-4">
                                 <i class="bi bi-person-badge"></i>
@@ -388,7 +388,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                const cartCountElement = document.getElementById('cartItemCount');
+                const cartCountElement = document.getElementById('cartCount');
                 if (cartCountElement) {
                     cartCountElement.textContent = data.count || 0;
                 }

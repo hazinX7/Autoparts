@@ -19,6 +19,7 @@ window.onload = function() {
         document.getElementById('profileItem').style.display = 'none';
     }
     updateCartCount();
+    updateUserBalance();
 }
 
 // Функция выхода теперь будет в личном кабинете
@@ -71,3 +72,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function updateCartCount() {
+    fetch('/Cart/GetCartCount')
+        .then(response => response.json())
+        .then(data => {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = data.count || 0;
+            }
+        })
+        .catch(error => {
+            console.error('Error updating cart count:', error);
+        });
+}
+
+function updateUserBalance() {
+    fetch('/Balance/GetBalance')
+        .then(response => response.json())
+        .then(data => {
+            const balanceElement = document.getElementById('userBalance');
+            if (balanceElement) {
+                balanceElement.textContent = new Intl.NumberFormat('ru-RU').format(data.balance);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            toastr.error('Ошибка при обновлении баланса');
+        });
+}
