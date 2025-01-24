@@ -5,19 +5,22 @@ namespace autoparts.Models
     public class ChangePasswordViewModel
     {
         [Required(ErrorMessage = "Введите текущий пароль")]
-        [DataType(DataType.Password)]
         [Display(Name = "Текущий пароль")]
+        [DataType(DataType.Password)]
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "Введите новый пароль")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен быть не менее 6 символов")]
-        [DataType(DataType.Password)]
         [Display(Name = "Новый пароль")]
+        [DataType(DataType.Password)]
+        [RegularExpression(@"^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?]*$",
+            ErrorMessage = "Пароль может содержать только латинские буквы, цифры и специальные символы")]
+        [StringLength(100, MinimumLength = 6, 
+            ErrorMessage = "Пароль должен содержать минимум 6 символов")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "Подтвердите новый пароль")]
+        [Display(Name = "Подтверждение пароля")]
         [DataType(DataType.Password)]
-        [Display(Name = "Подтверждение нового пароля")]
         [Compare("NewPassword", ErrorMessage = "Пароли не совпадают")]
         public string ConfirmPassword { get; set; }
     }
